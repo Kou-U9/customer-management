@@ -1,0 +1,22 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+
+{% block body-title %}
+{% if form.instance.pk %}
+受注編集
+{% else %}
+受注登録
+{% endif %}
+{% endblock%}
+
+{% block content%}
+<div class="container">
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-secondary"
+      >キャンセル</a
+    >
+  </form>
+</div>
+{% endblock %}

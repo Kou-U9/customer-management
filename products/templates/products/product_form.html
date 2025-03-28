@@ -1,0 +1,16 @@
+<!-- prettier-ignore -->
+{% extends "products/base.html" %}
+{% block body-title %}
+{% if form.instance.pk %}製品編集{% else %}製品登録{% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{% url 'products:product_list' %}" class="btn btn-secondary"
+      >キャンセル</a
+    >
+  </form>
+</div>
+{% endblock %}

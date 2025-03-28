@@ -1,0 +1,17 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block body-title %}
+{% if form.instance.pk %}
+権限編集
+{% else %}
+権限追加
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-success">保存</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,269 @@
+<!-- prettier-ignore -->
+{% extends 'customers/base.html' %}
+{% block title %}顧客一覧{% endblock %}
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'customers/css/modal.css' %}" />
+{% endblock %}
+<!-- prettier-ignore -->
+{% block body-title %}顧客一覧{% endblock %}
+{% block header-component %}
+<!-- Bootstrap 5 のJavaScript（オプション） -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+<!-- prettier-ignore -->
+{% block content %}
+<form action="{% url 'customer_list' %}" method="get" class="mt-3 mb-3 d-flex">
+  <input
+    type="text"
+    name="q"
+    class="form-control me-2"
+    placeholder="法人名・電話番号を検索"
+    value="{{ request.GET.q}}"
+    style="width: 800px"
+  />
+  <button type="submit" class="btn btn-primary">検索</button>
+</form>
+
+<div class="d-flex justify-content-between">
+  <div class="d-flex gap-2">
+    <a href="" class="btn btn-primary mb-3">左矢印</a>
+    <a href="" class="btn btn-primary mb-3">右矢印</a>
+  </div>
+  <div class="d-flex justify-content-end gap-2">
+    <a href="{% url 'customer_export_csv' %}" class="btn btn-primary mb-3"
+      >CSV出力</a
+    >
+    <a href="{% url 'customer_export_pdf' %}" class="btn btn-primary mb-3"
+      >PDF出力</a
+    >
+    <button
+      type="button"
+      class="btn btn-primary mb-3"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+    >
+      csvインポート
+    </button>
+    <!-- モーダル -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">モーダルタイトル</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="閉じる"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h2 class="text-center">CSVインポート</h2>
+            <form
+              id="csvForm"
+              enctype="multipart/form-data"
+              method="post"
+              action=""
+            >
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="csvFile" class="form-label"
+                  >CSVファイルを選択</label
+                >
+                <input
+                  class="form-control"
+                  type="file"
+                  id="csvFile"
+                  name="csv_file"
+                  accept=".csv"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-success">インポート</button>
+            </form>
+          </div>
+          <h3 class="text-center mt-4">インポートプレビュー</h3>
+          <div id="csvPreview"></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<table class="table">
+  <thead class="table-primary">
+    <tr>
+      <th><input type="checkbox" id="select-all" /></th>
+      <th>法人名</th>
+      <th>代表者名</th>
+      <th>法人番号</th>
+      <th>住所</th>
+      <th>電話番号</th>
+      <th>登録日</th>
+      <th>更新日</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  {% for customer in customers %}
+  <tr>
+    <td>
+      <input type="checkbox" class="select-item" value="{{ customer.id }}" />
+    </td>
+    <td>{{ customer.name }}</td>
+    <td>{{ customer.representative_name }}</td>
+    <td>{{ customer.company_number }}</td>
+    <td>{{ customer.address }}</td>
+    <td>{{ customer.phone_number }}</td>
+    <td>{{ customer.created_at|date:"Y/m/d" }}</td>
+    <td>{{ customer.updated_at|date:"Y/m/d" }}</td>
+    <td>
+      <a href="{% url 'customer_update' customer.pk %}" class="btn btn-primary"
+        >編集</a
+      >
+      <a
+        href="#"
+        class="delete-btn btn btn-danger"
+        data-customer-id="{{ customer.id }}"
+        data-customer-name="{{ customer.name }}"
+        >削除</a
+      >
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<button id="bulk-update-btn" class="btn btn-warning">一括更新</button>
+<div id="deleteModal" class="modal">
+  <div class="modal-content" id="modalContent">
+    <!-- AJAXで内容がここに表示されます -->
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // モーダルの表示/非表示
+  var modal = document.getElementById("deleteModal");
+  var deleteForm = document.getElementById("deleteForm");
+
+  // 削除ボタンをクリックしたとき
+  var deleteBtns = document.querySelectorAll(".delete-btn");
+  deleteBtns.forEach(function (btn) {
+    btn.onclick = function (event) {
+      event.preventDefault(); // ページ遷移を防ぐ
+
+      var customerId = btn.getAttribute("data-customer-id");
+      var customerName = btn.getAttribute("data-customer-name");
+
+      // AJAXで削除確認モーダルを読み込む
+      $.ajax({
+        url: "{% url 'customer_delete' 0 %}".replace("0", customerId), // ここで削除確認ページのURLを取得
+        method: "GET",
+        success: function (response) {
+          // 取得した内容をモーダルにセット
+          $("#modalContent").html(response);
+          modal.style.display = "block";
+        },
+      });
+    };
+  });
+
+  // モーダルを閉じる
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // CSVファイルが選択されたらプレビュー表示
+  $("#csvForm").on("submit", function (e) {
+    e.preventDefault(); // ページ遷移を防ぐ
+    var formData = new FormData(this); // フォームデータを作成
+
+    $.ajax({
+      url: '{% url "customer_import" %}', // URLのパス
+      type: "POST",
+      data: formData,
+      processData: false, // jQueryのデフォルト処理を無効化
+      contentType: false, // ファイルの送信に必要な設定
+      success: function (response) {
+        // CSVデータをプレビュー表示
+        var tableHtml = '<table class="table table-bordered"><thead><tr>';
+
+        // ヘッダ行を作成
+        response.rows[0].forEach(function (header) {
+          tableHtml += "<th>" + header + "</th>";
+        });
+        tableHtml += "</tr></thead><tbody>";
+
+        // データ行を作成
+        for (var i = 1; i < response.rows.length; i++) {
+          tableHtml += "<tr>";
+          response.rows[i].forEach(function (cell) {
+            tableHtml += "<td>" + cell + "</td>";
+          });
+          tableHtml += "</tr>";
+        }
+
+        tableHtml += "</tbody></table>";
+        $("#csvPreview").html(tableHtml); // プレビュー表示領域に表示
+      },
+      error: function (error) {
+        alert("エラーが発生しました。");
+      },
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    // 「全選択」チェックボックスの動作
+    $("#select-all").on("change", function () {
+      $(".select-item").prop("checked", $(this).prop("checked"));
+    });
+
+    // 一括更新ボタンのクリックイベント
+    $("#bulk-update-btn").on("click", function () {
+      var selectedIds = $(".select-item:checked")
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+      if (selectedIds.length === 0) {
+        alert("少なくとも1つのレコードを選択してください。");
+        return;
+      }
+
+      // 一括更新のAPIを呼び出し
+      $.ajax({
+        url: "{% url 'customer_bulk_update' %}",
+        method: "POST",
+        data: {
+          ids: selectedIds,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        success: function (response) {
+          alert("一括更新が完了しました！");
+          location.reload();
+        },
+        error: function (xhr, status, error) {
+          alert("エラーが発生しました: " + xhr.responseText);
+        },
+      });
+    });
+  });
+</script>
+{% endblock %}

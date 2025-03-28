@@ -1,0 +1,33 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block body-title%}
+受注一覧
+{% endblock%}
+{% block content %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>顧客</th>
+            <th>製品</th>
+            <th>数量</th>
+            <th>受注日</th>
+            <th>操作</th>
+        </tr>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.customer}}</td>
+                <td>{{ order.product }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>
+                    <a href="{% url 'orders:order_edit' order.pk %}" class="btn btn-primary">編集</a>
+                    <a href="{% url 'orders:order_delete' order.pk %}" class="btn btn-danger">削除</a>
+                    <a href="{% url 'orders:order_pdf' order.pk %}" class="btn btn-primary">PDF出力</a>
+                </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </thead>
+</table>
+{% endblock%}

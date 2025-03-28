@@ -1,0 +1,18 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% block body-title %}
+売上一覧
+{% endblock %}
+{% block content %}
+<a href="{% url 'sale_create' %}" class="btn btn-primary">新規登録</a>
+<table class="table">
+  <thead>
+    <tr>
+      <th>売上番号</th>
+      <th>日付</th>
+      <th>顧客名</th>
+      <th>合計金額</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+</table>

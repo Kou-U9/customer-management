@@ -1,0 +1,3 @@
+.form-table tr:nth-child(odd) td {
+  background: #f2f2f2;
+}

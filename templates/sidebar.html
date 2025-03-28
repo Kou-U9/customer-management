@@ -1,0 +1,30 @@
+<nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+  <div class="position-sticky">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'customer_create' %}">
+          顧客登録
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'customer_list' %}">顧客一覧</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'products:product_create' %}"
+          >製品登録</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'products:product_list' %}"
+          >製品一覧</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'orders:order_create' %}">受注登録</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'orders:order_list' %}">受注一覧</a>
+      </li>
+    </ul>
+  </div>
+</nav>

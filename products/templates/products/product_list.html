@@ -1,0 +1,43 @@
+<!-- prettier-ignore -->
+{% extends 'products/base.html' %}
+{% block title %}製品一覧{% endblock %}
+{% block body-title %}製品一覧{% endblock %}
+{% block content %}
+<div container mt-4>
+  <table class="table table-borderd">
+    <thead>
+      <tr>
+        <th>製品名</th>
+        <th>製品コード</th>
+        <th>価格</th>
+        <th>登録日時</th>
+        <th>更新日時</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.code }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.created_at|date:"Y-m-d" }}</td>
+        <td>{{ product.updated_at|date:"Y-m-d" }}</td>
+        <td>
+          <a
+            href="{% url 'products:product_update' product.pk %}"
+            class="btn btn-primary"
+            >編集</a
+          >
+          <a
+            href="{% url 'products:product_delete' product.pk %}"
+            class="btn btn-danger"
+            >削除</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

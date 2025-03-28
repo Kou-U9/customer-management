@@ -1,0 +1,27 @@
+<!-- prettier-ignore -->
+{% extends 'customers/base.html' %}
+{% block title %}顧客登録{% endblock %}
+{% block body-title %}顧客登録{% endblock %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <table class="table table-borderd form-table">
+    <tbody>
+      {% for field in form %}
+      <tr>
+        <td>{{ field.label }}</td>
+        {% if field.field.required %}
+        <td>
+          <span class="bg-danger text-white px-2 py-1 rounded">必須</span>
+        </td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>{{ field }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button type="submit" class="btn btn-primary">登録</button>
+</form>
+{% endblock %}

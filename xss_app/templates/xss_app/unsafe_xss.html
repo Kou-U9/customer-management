@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>XSSテストフォーム（脆弱なページ）</h2>
+    <form method="post">
+      {% csrf_token %}
+      <textarea name="content" rows="4" cols="50"></textarea><br />
+      <button type="submit">送信</button>
+    </form>
+
+    <h3>コメント一覧</h3>
+    <ul>
+      {% for comment in comments %}
+      <li>{{ comment.content | safe }}</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
